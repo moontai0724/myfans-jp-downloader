@@ -48,7 +48,6 @@ async function downloadUser(user: User) {
       console.log("Fetching next page: page ", nextPage);
       const { data, pagination } = await user.getPosts({
         page: nextPage,
-        per_page: 2,
       });
       posts.push(...data);
       if (!pagination.next) {
@@ -56,7 +55,6 @@ async function downloadUser(user: User) {
         return;
       }
       nextPage = pagination.next;
-      if (nextPage > 2) nextPage = -1;
     }
 
     const rawPost = posts.shift();
