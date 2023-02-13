@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "A downloader for download contents in myfans.jp",
   "scripts": {
-    "start": "tsc && node dist/index.js"
+    "start": "tsc && node dist/index.js",
+    "prepare": "husky install"
   },
   "repository": "https://github.com/moontai0724/myfans-jp-downloader",
   "author": {
@@ -14,6 +15,9 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
+    "@commitlint/cli": "^17.4.3",
+    "@commitlint/config-conventional": "^17.4.3",
+    "husky": "^8.0.3",
     "typescript": "^4.9.5"
   }
 }
