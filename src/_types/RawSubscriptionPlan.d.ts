@@ -1,4 +1,4 @@
-interface RawPlan {
+interface RawSubscriptionPlan {
   id: string;
   product_name: string;
   description: string;
@@ -14,15 +14,5 @@ interface RawPlan {
   message_room_id: unknown;
   active_discount: unknown;
   plan_discounts: unknown;
-  user: {
-    about: string;
-    active: boolean;
-    avatar_url: string;
-    banner_url: string;
-    id: string;
-    is_following: boolean;
-    likes_count: number;
-    name: string;
-    username: string;
-  };
+  user: RawUserPublic;
 }

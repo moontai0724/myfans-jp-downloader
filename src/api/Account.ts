@@ -17,7 +17,7 @@ export default class Account {
   async login(): Promise<string> {
     return await axios
       .post(
-        "/sign_in",
+        "/v1/sign_in",
         {
           email: this.email,
           password: this.password,
@@ -45,10 +45,10 @@ export default class Account {
   }
 
   async getInformation(): Promise<RawUser> {
-    return await axios.get("/account").then(res => res.data);
+    return await axios.get("/v1/account").then(res => res.data);
   }
 
   async getSubscriptions(): Promise<RawSubscription[]> {
-    return await axios.get("/account/subscriptions").then(res => res.data);
+    return await axios.get("/v1/account/subscriptions").then(res => res.data);
   }
 }

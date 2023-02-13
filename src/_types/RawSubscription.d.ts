@@ -12,5 +12,5 @@ interface RawSubscription {
   creator_fee: unknown;
   web_path: string;
   sort: unknown;
-  plan: RawPlan;
+  plan: RawSubscriptionPlan;
 }
