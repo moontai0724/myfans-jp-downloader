@@ -2,6 +2,8 @@ import axios from "axios";
 import { config } from "dotenv";
 import * as FileSystem from "fs";
 import * as Path from "path";
+import * as createLogger from "progress-estimator";
+import youtubedl, { create as createYoutubeDl } from "youtube-dl-exec";
 
 import Account from "./src/api/Account";
 import Post from "./src/api/Post";
@@ -96,9 +98,38 @@ async function downloadUser(user: User) {
           i,
       );
     }
+
+    if (data.video_url)
+      await downloadVideo(
+        data.video_url,
+        subPath,
+        replaceIllegalPathCharacters(
+          index.toString().padStart(4, "0") + " " + partBody,
+        ),
+      );
   }
 
   console.log("Finished downloading user");
+}
+
+async function downloadVideo(url: string, directory: string, filename: string) {
+  const executablePath = process.env.YT_DLP_EXECUTABLE as string;
+  if (executablePath) {
+    const youtubedlC = createYoutubeDl(executablePath);
+    const promise = youtubedlC(url, { output: `${directory}/${filename}.mp4` });
+    const logger = createLogger();
+    const result = await logger(promise, `Obtaining ${url}`);
+
+    console.log(result);
+    return promise;
+  } else {
+    const promise = youtubedl(url, { output: `${directory}/${filename}.mp4` });
+    const logger = createLogger();
+    const result = await logger(promise, `Obtaining ${url}`);
+
+    console.log(result);
+    return promise;
+  }
 }
 
 async function downloadImage(

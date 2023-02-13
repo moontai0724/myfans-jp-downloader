@@ -38,6 +38,8 @@
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-simple-import-sort": "^10.0.0"
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "progress-estimator": "^0.3.0",
+    "youtube-dl-exec": "^2.2.3"
   }
 }
