@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "baseUrl": "./src/",
+    "target": "ES2016",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "strict": true
+  },
+  "exclude": ["node_modules", "dist"],
+  "typeAcquisition": {
+    "enable": true,
+    "enableAutoDiscovery": true
+  }
+}

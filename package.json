@@ -1,0 +1,19 @@
+{
+  "name": "myfans-jp-downloader",
+  "version": "0.0.1",
+  "description": "A downloader for download contents in myfans.jp",
+  "scripts": {
+    "start": "tsc && node dist/index.js"
+  },
+  "repository": "https://github.com/moontai0724/myfans-jp-downloader",
+  "author": {
+    "name": "moontai0724",
+    "email": "moontai0724@gmail.com",
+    "url": "https://moontai0724.tw"
+  },
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "typescript": "^4.9.5"
+  }
+}
