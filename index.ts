@@ -1,5 +1,7 @@
 import axios from "axios";
 import { config } from "dotenv";
+import * as FileSystem from "fs";
+import * as Path from "path";
 
 import Account from "./src/api/Account";
 import Post from "./src/api/Post";
@@ -23,13 +25,28 @@ config();
 })();
 
 async function downloadUser(user: User) {
+  const basePath = Path.resolve(
+    __dirname,
+    "../output",
+    replaceIllegalPathCharacters(user.getName()),
+  );
+
+  if (!FileSystem.existsSync(basePath)) {
+    FileSystem.mkdirSync(basePath, {
+      recursive: true,
+    });
+  }
   const posts: RawPost[] = [];
   let nextPage = 1;
+  let index = 0;
 
   while (nextPage > 0 || posts.length > 0) {
+    index++;
     if (posts.length == 0) {
       console.log("Fetching next page: page ", nextPage);
-      const { data, pagination } = await user.getPosts({ page: nextPage });
+      const { data, pagination } = await user.getPosts({
+        page: nextPage,
+      });
       posts.push(...data);
       if (!pagination.next) {
         console.log("No more pages");
@@ -43,13 +60,31 @@ async function downloadUser(user: User) {
     if (!rawPost) throw new Error("No post to download");
 
     const post = new Post(rawPost.id);
-    await post.getPost();
-    console.log("Downloading post: ", post.simplifyData());
+    const data = await post.getPost();
+    console.log("Downloading post: ", data);
+
+    const partBody = data.body.split(/\r\n/).shift();
+
+    const subPath = Path.resolve(
+      basePath,
+      replaceIllegalPathCharacters(
+        index.toString().padStart(4, "0") + " " + partBody + " " + data.id,
+      ),
+    );
+
+    if (!FileSystem.existsSync(subPath)) {
+      FileSystem.mkdirSync(subPath, {
+        recursive: true,
+      });
+    }
+
+    FileSystem.writeFileSync(subPath + "/data.json", JSON.stringify(data));
+    FileSystem.writeFileSync(subPath + "/context.txt", data.body);
   }
 
   console.log("Finished downloading user");
 }
 
-// setInterval(() => {
-//   console.log("keep alive");
-// }, 10000);
+function replaceIllegalPathCharacters(str: string): string {
+  return str.replace(/[/\\?%*:|"<>]/g, "+");
+}

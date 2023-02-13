@@ -4,6 +4,10 @@ export default class User {
   private user?: RawUser;
   constructor(private username: string) {}
 
+  getName(): string {
+    return this.user?.name || this.username;
+  }
+
   async getInformation(): Promise<RawUser> {
     return await axios
       .get(`/v2/users/show_by_username?username=${this.username}`)
