@@ -46,6 +46,7 @@ async function downloadUser(user: User) {
       console.log("Fetching next page: page ", nextPage);
       const { data, pagination } = await user.getPosts({
         page: nextPage,
+        per_page: 2,
       });
       posts.push(...data);
       if (!pagination.next) {
@@ -80,9 +81,63 @@ async function downloadUser(user: User) {
 
     FileSystem.writeFileSync(subPath + "/data.json", JSON.stringify(data));
     FileSystem.writeFileSync(subPath + "/context.txt", data.body);
+
+    const images = post.getImages();
+    for (let i = 0; i < images.length; i++) {
+      await downloadImage(
+        images[i],
+        subPath,
+        index.toString().padStart(4, "0") +
+          " " +
+          partBody +
+          " " +
+          data.id +
+          " " +
+          i,
+      );
+    }
   }
 
   console.log("Finished downloading user");
+}
+
+async function downloadImage(
+  image: RawImage,
+  directory: string,
+  filename: string,
+) {
+  const response = await axios({
+    method: "GET",
+    url: image.file_url,
+    responseType: "stream",
+  });
+  const extension = Path.extname(new URL(response.data.responseUrl).pathname);
+  const path = Path.resolve(
+    directory,
+    replaceIllegalPathCharacters(filename + extension),
+  );
+  if (FileSystem.existsSync(path)) {
+    const fileStat = FileSystem.statSync(path);
+    if (fileStat.size == response.headers["content-length"]) {
+      console.log(`${filename}${extension} already downloaded, skipped.`);
+      return;
+    }
+  }
+
+  const writer = FileSystem.createWriteStream(path);
+
+  response.data.pipe(writer);
+
+  return new Promise((resolve, reject) => {
+    writer.on("finish", (...messages) => {
+      console.log(`${filename}${extension} downloaded.`);
+      resolve(messages);
+    });
+    writer.on("error", (...messages) => {
+      console.log(`${filename}${extension} failed to download!`, messages);
+      reject(messages);
+    });
+  });
 }
 
 function replaceIllegalPathCharacters(str: string): string {
