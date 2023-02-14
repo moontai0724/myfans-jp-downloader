@@ -50,11 +50,7 @@ async function downloadUser(user: User) {
         page: nextPage,
       });
       posts.push(...data);
-      if (!pagination.next) {
-        console.log("No more pages");
-        return;
-      }
-      nextPage = pagination.next;
+      nextPage = pagination.next ?? -1;
     }
 
     const rawPost = posts.shift();
@@ -97,17 +93,19 @@ async function downloadUser(user: User) {
       );
     }
 
-    if (data.video_url)
-      await downloadVideo(
-        data.video_url,
-        subPath,
-        replaceIllegalPathCharacters(
-          index.toString().padStart(4, "0") + " " + partBody,
-        ),
-      );
+    if (!data.video_url) continue;
+
+    const filename = replaceIllegalPathCharacters(
+      index.toString().padStart(4, "0") + " " + partBody,
+    );
+    if (FileSystem.existsSync(subPath + "/" + filename + ".mp4")) continue;
+
+    await downloadVideo(data.video_url, subPath, filename);
   }
 
-  console.log("Finished downloading user");
+  console.log(
+    "==============================\n\n\n\nFinished downloading user!!!",
+  );
 }
 
 async function downloadVideo(url: string, directory: string, filename: string) {
