@@ -26,6 +26,27 @@ config();
   downloadUser(target);
 })();
 
+const folders: string[] = [];
+function findFolder(id: string): string | null {
+  if (folders.length == 0) throw new Error("Folders not loaded");
+
+  const existing = folders.find(folderName => folderName.endsWith(id));
+  return existing ?? null;
+}
+
+function loadFolders(username: string): void {
+  const basePath = Path.resolve(
+    __dirname,
+    "../output",
+    replaceIllegalPathCharacters(username),
+  );
+  FileSystem.readdirSync(basePath).forEach(file => {
+    if (FileSystem.statSync(Path.resolve(basePath, file)).isDirectory()) {
+      folders.push(file);
+    }
+  });
+}
+
 async function downloadUser(user: User) {
   const basePath = Path.resolve(
     __dirname,
@@ -38,6 +59,8 @@ async function downloadUser(user: User) {
       recursive: true,
     });
   }
+
+  loadFolders(user.getName());
   const posts: RawPost[] = [];
   let nextPage = 1;
   let index = 0;
@@ -62,17 +85,24 @@ async function downloadUser(user: User) {
 
     const partBody = data.body.split(/\r\n/).shift();
 
+    const folderName =
+      index.toString().padStart(4, "0") + " " + partBody + " " + data.id;
     const subPath = Path.resolve(
       basePath,
-      replaceIllegalPathCharacters(
-        index.toString().padStart(4, "0") + " " + partBody + " " + data.id,
-      ),
+      replaceIllegalPathCharacters(folderName),
     );
 
-    if (!FileSystem.existsSync(subPath)) {
+    const existing = findFolder(data.id);
+    if (existing == null) {
+      console.log("Creating folder: ", folderName);
+
       FileSystem.mkdirSync(subPath, {
         recursive: true,
       });
+    } else if (existing !== folderName) {
+      console.log("Renaming folder: ", existing, " to ", folderName);
+
+      FileSystem.renameSync(Path.resolve(basePath, existing), subPath);
     }
 
     FileSystem.writeFileSync(subPath + "/data.json", JSON.stringify(data));
