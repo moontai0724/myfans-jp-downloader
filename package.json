@@ -10,7 +10,7 @@
     "lint": "yarn lint:eslint && yarn lint:prettier",
     "lint:eslint": "eslint --ext \".ts,.js,\" --ignore-path .gitignore ./src",
     "lint:prettier": "prettier --check ./src",
-    "start": "tsc && node dist/index.js",
+    "build": "tsc",
     "prepare": "husky install"
   },
   "repository": "https://github.com/moontai0724/myfans-jp-downloader",
