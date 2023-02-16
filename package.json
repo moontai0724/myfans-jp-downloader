@@ -6,6 +6,9 @@
     "src/**/*.{ts,js}": "eslint --cache --fix",
     "src/**/*.**": "prettier --check --ignore-unknown --write"
   },
+  "bin": {
+    "myfans-jp-downloader": "./build/index.js"
+  },
   "scripts": {
     "lint": "yarn lint:eslint && yarn lint:prettier",
     "lint:eslint": "eslint --ext \".ts,.js,\" --ignore-path .gitignore ./src",
@@ -24,6 +27,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.4.3",
     "@commitlint/config-conventional": "^17.4.3",
+    "@types/yargs": "^17.0.22",
     "husky": "^8.0.3",
     "lint-staged": "^13.1.1",
     "prettier": "2.8.4",
@@ -37,6 +41,7 @@
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-simple-import-sort": "^10.0.0"
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "yargs": "^17.6.2"
   }
 }
