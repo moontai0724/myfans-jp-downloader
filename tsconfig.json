@@ -3,7 +3,7 @@
     "allowJs": true,
     "baseUrl": "./src/",
     "rootDir": "src",
-    "target": "ES2016",
+    "target": "es2015",
     "module": "CommonJS",
     "moduleResolution": "node",
     "noImplicitAny": true,
